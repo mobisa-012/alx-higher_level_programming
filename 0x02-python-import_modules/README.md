@@ -1,2 +1,1 @@
-Day 3. 
-Command line arguments in python
+# python import modules
