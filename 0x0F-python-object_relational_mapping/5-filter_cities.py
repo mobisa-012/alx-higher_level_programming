@@ -1,38 +1,39 @@
 #!/usr/bin/python3
 """
- con
+script that takes in the name of a
+state as an argument and lists all cities of that state
 """
+
+
 import MySQLdb
-import sys
-
-
-def mainx():
-    """con"""
-
-    db = MySQLdb.connect(host='localhost',
-                         port=3306,
-                         user=sys.argv[1],
-                         passwd=sys.argv[2],
-                         db=sys.argv[3]
-                         )
-    cur = db.cursor()
-    cur.execute("SELECT cities.name\
-                FROM cities\
-                INNER JOIN states\
-                ON cities.state_id = states.id\
-                WHERE states.name = %(state_name)s\
-                ORDER BY cities.id ASC",
-                {'state_name': sys.argv[4]}
-                )
-    rows = cur.fetchall()
-    lst = []
-    for row in rows:
-        for col in row:
-            lst.append(col)
-    print(', '.join(lst))
-    cur.close()
-    db.close()
-
+from sys import argv
 
 if __name__ == "__main__":
-    mainx()
+
+    db = MySQLdb.connect(
+        host="localhost",
+        port=3306,
+        user=argv[1],
+        password=argv[2],
+        database=argv[3],
+
+    )
+    cursor = db.cursor()
+    sql = """SELECT cities.name
+            FROM cities
+            JOIN states
+            ON states.id = cities.state_id
+            WHERE states.name = %s
+            ORDER BY cities.id"""
+    cursor.execute(sql, (argv[4], ))
+    results = cursor.fetchall()
+    if results == ():
+        print("")
+    else:
+        for i in range(len(results)):
+            if i == len(results)-1:
+                print(results[i][0])
+            else:
+                print("{}, ".format(results[i][0]), end="")
+    cursor.close()
+    db.close()

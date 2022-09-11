@@ -1,25 +1,25 @@
 #!/usr/bin/python3
-""" con
 """
-import sys
+Script that lists all State objects from the database
+"""
+
+from sys import argv
 from model_state import Base, State
-from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
 
+if __name__ == "__main__":
 
-def mainx():
-    """ con """
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'.format(
-        sys.argv[1], sys.argv[2], sys.argv[3]), pool_pre_ping=True)
+    user = argv[1]
+    password = argv[2]
+    database = argv[3]
+
+    engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}'.format
+                           (user, password, database), pool_pre_ping=True)
     Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    for instance in session.query(State)\
-            .filter(State.name.like('%a%')).\
-            order_by(asc(State.id)):
-        print(str(instance.id) + ': ' + instance.name)
+
+    session = Session(engine)
+    for state in session.query(State).order_by(State.id.asc()).all():
+        if 'a' in state.name:
+            print("{}: {}".format(state.id, state.name))
     session.close()
-
-
-if __name__ == '__main__':
-    mainx()

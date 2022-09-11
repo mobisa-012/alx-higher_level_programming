@@ -1,22 +1,39 @@
 #!/usr/bin/python3
-""" cont """
-import sys
-from model_state import Base, State
-from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
+"""
+script that takes in the name of a
+state as an argument and lists all cities of that state
+"""
 
 
-def mainx():
-    """ main function """
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'.format(
-        sys.argv[1], sys.argv[2], sys.argv[3]), pool_pre_ping=True)
-    Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    for instance in session.query(State).order_by(asc(State.id)):
-        print(str(instance.id) + ': ' + instance.name)
-    session.close()
-
+import MySQLdb
+from sys import argv
 
 if __name__ == "__main__":
-    mainx()
+
+    db = MySQLdb.connect(
+        host="localhost",
+        port=3306,
+        user=argv[1],
+        password=argv[2],
+        database=argv[3],
+
+    )
+    cursor = db.cursor()
+    sql = """SELECT cities.name
+            FROM cities
+            JOIN states
+            ON states.id = cities.state_id
+            WHERE states.name = %s
+            ORDER BY cities.id"""
+    cursor.execute(sql, (argv[4], ))
+    results = cursor.fetchall()
+    if results == ():
+        print("")
+    else:
+        for i in range(len(results)):
+            if i == len(results)-1:
+                print(results[i][0])
+            else:
+                print("{}, ".format(results[i][0]), end="")
+    cursor.close()
+    db.close()
