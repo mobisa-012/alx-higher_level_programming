@@ -1,15 +1,30 @@
 #!/usr/bin/python3
 """
-con
+Provides a State class to map to objects in a states table
 """
+
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from relationship_city import Base, City
+
+
+Base = declarative_base()
+
 
 class State(Base):
-    """ con"""
+    """
+    Defines a State class to map to objects in a states table
+    """
     __tablename__ = 'states'
-    id = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
-    name = Column(String(128), nullable=False)
-    cities = relationship("City",
-     cascade="all,delete", backref='state')
+    id = Column(
+        Integer,
+        autoincrement=True,
+        nullable=False,
+        primary_key=True,
+        unique=True,
+    )
+    name = Column(
+        String(128),
+        nullable=False,
+    )
+    cities = relationship('City', cascade='all, delete-orphan')

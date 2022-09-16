@@ -1,18 +1,31 @@
 #!/usr/bin/python3
 """
-con
+Provides a City class to map to objects in a cities table
 """
+from relationship_state import Base
+
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
 
-Base = declarative_base()
-
-
 class City(Base):
-    """ con """
+    """
+    Defines a City class to map to objects in a cities table
+    """
     __tablename__ = 'cities'
-    id = Column(Integer, primary_key=True, unique=True, autoincrement=True, nullable=False)
-
-    name = Column(String(128), nullable=False)
-    state_id = Column(Integer, ForeignKey('states.id'), nullable=False)
+    id = Column(
+        Integer,
+        autoincrement=True,
+        nullable=False,
+        primary_key=True,
+        unique=True,
+    )
+    name = Column(
+        String(256),
+        nullable=False,
+    )
+    state_id = Column(
+        Integer,
+        ForeignKey("states.id"),
+        nullable=False,
+    )

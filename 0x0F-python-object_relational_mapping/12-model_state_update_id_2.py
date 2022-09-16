@@ -1,24 +1,39 @@
 #!/usr/bin/python3
-""" tcon
 """
-import sys
+Add the State object Louisiana to the states table of a MySQL database
+"""
+
 from model_state import Base, State
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sys import argv, exit, stderr
 
 
-def mainx():
-    """ con """
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost:3306/{}'.format(
-        sys.argv[1], sys.argv[2], sys.argv[3]), pool_pre_ping=True)
-    Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    inst = session.query(State).filter(State.id == 2).one()
-    inst.name = "New Mexico"
-    session.commit()
-    session.close()
+HELP = '{} username password database'.format(argv[0])
+HOST = 'localhost'
+PORT = 3306
+URLFORMAT = '{dialect}+{driver}://{user}:{password}@{host}/{database}'
 
 
 if __name__ == '__main__':
-    mainx()
+    try:
+        params = {
+            'dialect': 'mysql',
+            'driver': 'mysqldb',
+            'user': argv[1],
+            'password': argv[2],
+            'host': HOST,
+            'database': argv[3],
+        }
+    except IndexError:
+        stderr.write('usage: {}\n'.format(HELP))
+        exit(2)
+    engine = create_engine(URLFORMAT.format(**params), pool_pre_ping=True)
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    match = session.query(State).filter(State.id == 2).first()
+    if match is not None:
+        match.name = 'New Mexico'
+        session.commit()
+    session.close()
