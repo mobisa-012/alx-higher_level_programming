@@ -1,22 +1,18 @@
 #!/usr/bin/python3
-""" This module fetches https://alx-intranet.hbtn.io/status
+"""Fetches the URL: https://intranet.hbtn.io/status
 """
 
-import urllib.request
-
-
-def get_alx_status():
-    """ This function fetches https://alx-intranet.hbtn.io/status
-    """
-    url = "https://alx-intranet.hbtn.io/status"
-    req = urllib.request.Request(url)
-    with urllib.request.urlopen(req) as resp:
-        html = resp.read()
-        print("Body response:")
-        print("\t- type: {}".format(type(html)))
-        print("\t- content: {}".format(html))
-        print("\t- utf8 content: {}".format(html.decode('utf-8')))
+from urllib.request import Request, urlopen
 
 
 if __name__ == "__main__":
-    get_alx_status()
+    req = Request('https://intranet.hbtn.io/status')
+
+    with urlopen(req) as res:
+        content = res.read()
+        utf8_content = content.decode('utf-8')
+
+        print('Body response:')
+        print('\t- type: {_type}'.format(_type=type(content)))
+        print('\t- content: {_content}'.format(_content=content))
+        print('\t- utf8 content: {_utf8_c}'.format(_utf8_c=utf8_content))
